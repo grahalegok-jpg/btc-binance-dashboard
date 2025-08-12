@@ -1,10 +1,11 @@
 import streamlit as st
 import requests
-import time
+from streamlit_autorefresh import st_autorefresh
 
 st.title("Realtime BTC/USDT Price (Binance)")
 
-placeholder = st.empty()
+# Refresh setiap 5 detik (5000 ms)
+count = st_autorefresh(interval=5000, limit=None, key="refresh")
 
 def fetch_price():
     url = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
@@ -19,13 +20,9 @@ def fetch_price():
     except:
         return None
 
-# Loop update harga setiap 5 detik
-while True:
-    price = fetch_price()
-    if price:
-        placeholder.metric(label="BTC/USDT Price", value=f"${price:,.2f}")
-    else:
-        placeholder.error("Gagal mengambil data harga.")
-    time.sleep(5)import streamlit as st
-import requests
+price = fetch_price()
+if price:
+    st.metric(label="BTC/USDT Price", value=f"${price:,.2f}")
+else:
+    st.error("Gagal mengambil data harga.")
 
